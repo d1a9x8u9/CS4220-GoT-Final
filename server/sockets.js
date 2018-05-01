@@ -20,10 +20,10 @@ module.exports = (server) => {
 
         socket.on('entered-search', input => {
             // Filter thorugh our searched history return any object that matches
-            const prevSearched = searched.filter(search => search.keyword.toUpperCase() === input.toUpperCase()).length
+            const prevSearched = searched.filter(search => search.keyword.toUpperCase() === input.toUpperCase())
 
             // If none, then create new and emit success, else emit previously searched
-            if (!prevSearched) {
+            if (!prevSearched.length) {
                 gotApi.character(input)
                     .then(res => {
 
@@ -39,12 +39,8 @@ module.exports = (server) => {
                     })
                     .catch(err => io.emit('error-api', err))
             } else {
-                const result = searched.filter(search => search.keyword.toUpperCase() === input.toUpperCase())
-
-                io.emit('retrieved-prev-result', result)
-                io.emit('prev-search', input)
+                io.emit('retrieved-prev-result', prevSearched)
             }
         })
     })
-
 }

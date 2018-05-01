@@ -55,15 +55,16 @@ socket.on('refresh-history', searched => {
 })
 
 socket.on('successful-search', search => {
+    app.message = ''
     app.results = []
     app.results.push(search.results)
 
     app.searched.push(search)
 })
 
-socket.on('prev-search', search => {
-    app.message = `"${search}" found in search history. Displaying cached results...`
-})
+// socket.on('prev-search', search => {
+//     app.message = `"${search}" found in search history. Displaying cached results...`
+// })
 
 socket.on('retrieved-prev-result', retrievedResult => {
     let keywords = []
@@ -77,7 +78,7 @@ socket.on('retrieved-prev-result', retrievedResult => {
     })
 
     keywords = keywords.join('')
-    app.message = `Displaying cached results for ${keywords}.`
+    app.message = `Displaying cached results for "${keywords}".`
 })
 
 socket.on('err-api', err => {
