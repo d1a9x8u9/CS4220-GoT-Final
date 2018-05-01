@@ -1,0 +1,38 @@
+#searchAndNotifications div {
+    color: rgb(253, 56, 56); 
+    font-style: italic;
+}
+
+#searchAndNotifications input {
+    width: 60%;
+    margin: 0 0 2%;
+}
+
+#moreDetailsComponent #details-ul {
+    margin: 2% 0 5%;
+}
+
+#breadcrumb {
+    font-size: 1em;
+    color: blue; 
+    cursor: pointer;
+}
+
+#moreDetailsComponent #currentBreadCrumb {
+    font-size: 2em;
+    text-decoration: underline;
+}
+
+#label {
+    font-size: 1em;
+}
+
+#resultsComponent span {
+    cursor: pointer;
+}
+
+#historyComponent span {
+    cursor: pointer;
+}
+
+

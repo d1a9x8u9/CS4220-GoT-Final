@@ -2,21 +2,24 @@
 const resultsComponent = {
     template: `<div>
                 <h3>Results</h3>
-                <ul v-for="result in results">
+                <ol v-for="result in results">
                     <li v-for="r in result">
                         <span @click="$root.getDetailedResultClickHandler(r)">{{r.name}}</span>
                     </li>
-                </ul>
+                </ol>
             </div>`,
     props: ['results']
 }
 
 const moreDetailsComponent = {
     template: `<div>
-                <h3><span @click="$root.listResults" style="color: blue; cursor: pointer">Results </span>\> {{result.name}}</h3>
-                <ul v-for="key in result">
-                    <span>{{key}}</span>
-                </ul>
+                <span id="breadcrumb" @click="$root.listResults">Results </span>\> <span id="currentBreadCrumb">{{result.name}}</span>
+                <div id="details-ul">
+                    <ul v-for="(value, key) in result">
+                        <span id="label" class="badge badge-secondary">{{key}}</span> <br>
+                        {{value}}
+                    </ul>
+                </div>
             </div>`,
     props: ['result']
 }
@@ -56,7 +59,6 @@ const app = new Vue({
         getDetailedResultClickHandler: function (ob) {
             this.detailedResult = true
             this.result = ob
-            // this.message = `Displaying cached detailed result for "${ob.name}"`
             this.message = ''
         },
         listResults: function () {
@@ -77,9 +79,13 @@ socket.on('refresh-history', searched => {
 
 socket.on('successful-search', search => {
     app.detailedResult = false
-    app.message = ''
+    app.message = 'No results found.'
     app.results = []
-    app.results.push(search.results)
+
+    if(search.results) {
+        app.message = `${search.results.length} results found for "${search.keyword}".`
+        app.results.push(search.results)
+    }    
 
     app.searched.push(search)
 })
@@ -95,8 +101,11 @@ socket.on('retrieved-prev-result', retrievedResult => {
             keywords.push(res.keyword)
     })
 
-    keywords = keywords.join('')
-    app.message = `Displaying cached results for "${keywords}".`
+    keywords = keywords.join(',')
+
+    // Since we get an array of dictonary back, we know that at most array.len = 1 & array[0] is the cached result 
+    app.results[0] !== null ? app.message = `Found ${app.results[0].length} cached results for "${keywords}".`: app.message = `No results found from cached history for "${keywords}".`
+    
     app.detailedResult = false
 })
 

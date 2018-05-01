@@ -9,5 +9,5 @@ const _fetch = (command) => {
 }
 
 exports.character = (name) => {
-    return _fetch(`characters/?name=${name}`)
+    return _fetch(`houses/?region=${name}`)
 }
