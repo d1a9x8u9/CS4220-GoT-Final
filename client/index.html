@@ -25,8 +25,9 @@
         </div>
 
         <!-- search results -->
-        <results-component v-bind:results="results"></results-component>
+        <results-component v-show="!detailedResult" v-bind:results="results"></results-component>
 
+        <moredetails-component v-show="detailedResult" v-bind:result="result"></moredetails-component>
         <!-- search history -->
         <history-component v-show="searched" v-bind:searched="searched"></history-component>
     </div>

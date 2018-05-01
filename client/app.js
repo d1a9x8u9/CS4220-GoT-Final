@@ -3,12 +3,22 @@ const resultsComponent = {
     template: `<div>
                 <h3>Results</h3>
                 <ul v-for="result in results">
-                    <li>
-                        <span>{{result}}</span>
+                    <li v-for="r in result">
+                        <span @click="$root.getDetailedResultClickHandler(r)">{{r.name}}</span>
                     </li>
                 </ul>
             </div>`,
     props: ['results']
+}
+
+const moreDetailsComponent = {
+    template: `<div>
+                <h3><span @click="$root.listResults" style="color: blue; cursor: pointer">Results </span>\> {{result.name}}</h3>
+                <ul v-for="key in result">
+                    <span>{{key}}</span>
+                </ul>
+            </div>`,
+    props: ['result']
 }
 
 const historyComponent = {
@@ -28,10 +38,11 @@ const app = new Vue({
     el: '#got-app',
     data: {
         search: '',
-        clickedIndex: '',
         searched: [],
         message: '',
         results: [],
+        result: [],
+        detailedResult: false,
     },
     methods: {
         searchHandler: function () {
@@ -41,11 +52,21 @@ const app = new Vue({
         },
         searchHistoryClickHandler: function (prevSearchedKeyword) {
             socket.emit('clicked-history', prevSearchedKeyword)
+        },
+        getDetailedResultClickHandler: function (ob) {
+            this.detailedResult = true
+            this.result = ob
+            // this.message = `Displaying cached detailed result for "${ob.name}"`
+            this.message = ''
+        },
+        listResults: function () {
+            this.detailedResult = false
         }
     },
     components: {
         'results-component': resultsComponent,
-        'history-component': historyComponent
+        'history-component': historyComponent,
+        'moredetails-component': moreDetailsComponent,
     }
 })
 
@@ -55,6 +76,7 @@ socket.on('refresh-history', searched => {
 })
 
 socket.on('successful-search', search => {
+    app.detailedResult = false
     app.message = ''
     app.results = []
     app.results.push(search.results)
@@ -75,6 +97,7 @@ socket.on('retrieved-prev-result', retrievedResult => {
 
     keywords = keywords.join('')
     app.message = `Displaying cached results for "${keywords}".`
+    app.detailedResult = false
 })
 
 socket.on('err-api', err => {
