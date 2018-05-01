@@ -2,13 +2,26 @@
 const resultsComponent = {
     template: `<div>
                 <h3>Results</h3>
-                <ul v-for="result in results">
-                    <li>
-                        <span>{{result}}</span>
+                <ol v-for="result in results">
+                    <li v-for="r in result">
+                        <span @click="$root.getDetailedResultClickHandler(r)">{{r.name}}</span>
                     </li>
-                </ul>
+                </ol>
             </div>`,
     props: ['results']
+}
+
+const moreDetailsComponent = {
+    template: `<div>
+                <span id="breadcrumb" @click="$root.listResults">Results </span>\> <span id="currentBreadCrumb">{{result.name}}</span>
+                <div id="details-ul">
+                    <ul v-for="(value, key) in result">
+                        <span id="label" class="badge badge-secondary">{{key}}</span> <br>
+                        {{value}}
+                    </ul>
+                </div>
+            </div>`,
+    props: ['result']
 }
 
 const historyComponent = {
@@ -28,10 +41,11 @@ const app = new Vue({
     el: '#got-app',
     data: {
         search: '',
-        clickedIndex: '',
         searched: [],
         message: '',
         results: [],
+        result: [],
+        detailedResult: false,
     },
     methods: {
         searchHandler: function () {
@@ -41,11 +55,20 @@ const app = new Vue({
         },
         searchHistoryClickHandler: function (prevSearchedKeyword) {
             socket.emit('clicked-history', prevSearchedKeyword)
+        },
+        getDetailedResultClickHandler: function (ob) {
+            this.detailedResult = true
+            this.result = ob
+            this.message = ''
+        },
+        listResults: function () {
+            this.detailedResult = false
         }
     },
     components: {
         'results-component': resultsComponent,
-        'history-component': historyComponent
+        'history-component': historyComponent,
+        'moredetails-component': moreDetailsComponent,
     }
 })
 
@@ -55,9 +78,14 @@ socket.on('refresh-history', searched => {
 })
 
 socket.on('successful-search', search => {
-    app.message = ''
+    app.detailedResult = false
+    app.message = 'No results found.'
     app.results = []
-    app.results.push(search.results)
+
+    if(search.results) {
+        app.message = `${search.results.length} results found for "${search.keyword}".`
+        app.results.push(search.results)
+    }    
 
     app.searched.push(search)
 })
@@ -73,8 +101,12 @@ socket.on('retrieved-prev-result', retrievedResult => {
             keywords.push(res.keyword)
     })
 
-    keywords = keywords.join('')
-    app.message = `Displaying cached results for "${keywords}".`
+    keywords = keywords.join(',')
+
+    // Since we get an array of dictonary back, we know that at most array.len = 1 & array[0] is the cached result 
+    app.results[0] !== null ? app.message = `Found ${app.results[0].length} cached results for "${keywords}".`: app.message = `No results found from cached history for "${keywords}".`
+    
+    app.detailedResult = false
 })
 
 socket.on('err-api', err => {
