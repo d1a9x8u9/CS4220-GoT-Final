@@ -30,7 +30,7 @@ module.exports = (server) => {
                         const search = {
                             id: socket.id,
                             keyword: input,
-                            results: res.length > 0 ? res : "No results found"
+                            results: res.length > 0 ? res : null
                         }
 
                         searched.push(search)
