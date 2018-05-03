@@ -50,7 +50,7 @@ const app = new Vue({
     methods: {
         searchHandler: function () {
             if (!this.search) return
-
+            
             socket.emit('entered-search', this.search)
         },
         searchHistoryClickHandler: function (prevSearchedKeyword) {
@@ -91,8 +91,10 @@ socket.on('successful-search', search => {
 })
 
 socket.on('retrieved-prev-result', retrievedResult => {
-    let keywords = []
     app.results = []
+    app.search = ''
+    app.detailedResult = false
+    let keywords = []
 
     retrievedResult.forEach(res => {
         app.results.push(res.results)
@@ -105,8 +107,6 @@ socket.on('retrieved-prev-result', retrievedResult => {
 
     // Since we get an array of dictonary back, we know that at most array.len = 1 & array[0] is the cached result 
     app.results[0] !== null ? app.message = `Found ${app.results[0].length} cached results for "${keywords}".`: app.message = `No results found from cached history for "${keywords}".`
-    
-    app.detailedResult = false
 })
 
 socket.on('err-api', err => {

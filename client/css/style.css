@@ -2,6 +2,10 @@ html, #body {
     height: 100%;
 }
 
+#searchAndNotification {
+    border-bottom: 1px black solid;
+}
+
 #searchAndNotifications div {
     color: rgb(253, 56, 56); 
     font-style: italic;
@@ -43,6 +47,10 @@ html, #body {
 #leftCol {
     border-right: 1px black solid;
     box-shadow: 0 1px 0 0 #1f1f1f;
+}
+
+#moreDetailsComponent {
+    margin: 0
 }
 
 #leftCol, #rightCol {
