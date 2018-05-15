@@ -1,4 +1,4 @@
-#GoT Informational Web App 
+# GoT Informational Web App 
 
 ## Express, Node.js, Vue.js, Socket.io, & Game of Thrones Api.
 
