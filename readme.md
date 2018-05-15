@@ -1,1 +1,1 @@
-## Final project for CS4220 2018 using Express, Node.js, Vue.js, Socket.io, & Game of Thrones Api
+## GoT Informational Web App using Express, Node.js, Vue.js, Socket.io, & Game of Thrones Api.
